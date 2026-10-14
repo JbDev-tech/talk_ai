@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# talk_ai
 
-## Getting Started
+Application web qui permet de discuter avec le contenu d'une page web. On colle l'adresse d'un site dans l'URL de l'application, la page est lue et indexée, puis on pose ses questions dans un chat et l'IA répond à partir du contenu de cette page.
 
-First, run the development server:
+## Fonctionnalités
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Ouvrir une page web à partir de son URL (`/https://exemple.com/page`)
+- Indexation automatique du contenu de la page (une seule fois par URL)
+- Chat avec l'IA, qui répond à partir du contenu indexé
+- Historique de conversation conservé pour chaque utilisateur et chaque page
+
+## Technologies
+
+- Next.js (App Router), React, TypeScript
+- Tailwind CSS et daisyUI
+- Upstash Redis (suivi des URLs indexées et historique des messages)
+- Upstash Vector et `@upstash/rag-chat` (indexation et recherche dans le contenu)
+
+## Comment ça marche
+
+1. L'URL du site est lue depuis la route dynamique `app/[...link]/page.tsx`.
+2. Si la page n'a jamais été indexée, son contenu HTML est découpé en morceaux (chunks) puis stocké dans Upstash Vector. L'URL est enregistrée dans Redis pour ne pas la réindexer.
+3. Quand l'utilisateur pose une question, les morceaux les plus pertinents sont retrouvés et envoyés à l'IA pour générer la réponse.
+4. L'historique est retrouvé grâce à un identifiant de session (l'URL combinée à un cookie).
+
+## Lancer le projet
+
+1. Cloner le dépôt :
 ```
+   git clone https://github.com/JbDev-tech/talk_ai.git
+   cd talk_ai
+```
+2. Installer les dépendances :
+```
+   npm install
+```
+3. Copier `.env.example` en `.env`, puis remplir les clés Upstash et celle du modèle de langage.
+4. Lancer le serveur de développement :
+```
+   npm run dev
+```
+5. Ouvrir http://localhost:3000
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Crédits
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Projet réalisé en suivant le tutoriel de Faiz Dev : https://www.youtube.com/watch?v=YS5etmvl5Ic
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Ce que j'ai fait moi-même en plus du tutoriel : corrections de bugs rencontrés en cours de route (URL tronquée à cause du double slash, paramètres de découpage du texte, ordre des variables), configuration de Git et publication sur GitHub.
 
-## Learn More
+## Ce que j'ai appris
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Les routes dynamiques de Next.js et la lecture asynchrone de `params`
+- Le principe du RAG : découper un texte, l'indexer, retrouver les passages utiles
+- Le rôle de Redis et d'une base vectorielle
+- Pourquoi garder ses clés API hors de GitHub (`.env` et `.gitignore`)
+- Lire les messages d'erreur de Next.js et de TypeScript pour trouver la cause
+- Les bases de Git et GitHub : commit, push, dépôt distant
