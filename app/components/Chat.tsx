@@ -54,14 +54,30 @@ const Chat = ({decodedLink, sessionId,initialMessages}:{decodedLink: string, ses
 
                     </textarea>
                     
-                    <div className='flex justify-between items-center'>
-                        <div className='badge badge-soft badge-success badge-lg'>
-                            Talk.ai
-                        </div>
-                        <button className='btn btn-circle btn-primary'>
-                            <ArrowUp/>
-                        </button>
-                    </div>
+                    
+<div className="flex justify-between items-center">
+  <div className="badge badge-soft badge-success badge-lg">
+    Talk.ai
+  </div>
+
+  <div className="flex flex-col items-center gap-2">
+    <button
+      type="submit"
+      className="btn btn-circle btn-primary"
+      aria-label="Envoyer le message"
+    >
+      <ArrowUp />
+    </button>
+
+    <a
+      href="/"
+      className="text-sm text-base-content/70 hover:text-primary transition-colors"
+    >
+      ← Retour
+    </a>
+  </div>
+</div>
+
                 </div>
             </form>
     </div>

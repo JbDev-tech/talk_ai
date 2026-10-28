@@ -13,8 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Talk_ai",
-  description: "Colle l'URL d'une page web et pose tes questions à l'intelligence artificielle. Talk AI analyse le contenu et te fournit des réponses pertinentes.",
+  title: "Talk AI",
+  description: "Discute avec n'importe quelle page web grâce à l'IA.",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
