@@ -12,9 +12,10 @@
     "@upstash/rag-chat": "^2.0.3",
     "@upstash/redis": "^1.39.0",
     "lucide-react": "^1.55.0",
-    "next": "16.4.0",
+    "next": "^16.4.3",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-markdown": "^10.1.0"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
