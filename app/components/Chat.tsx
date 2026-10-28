@@ -1,16 +1,28 @@
 'use client'
 import { Message, useChat } from 'ai/react'
 import { ArrowUp, Sparkle } from 'lucide-react'
-import React from 'react'
+import React, { useRef } from 'react'
 import MessagesList from './MessagesList'
 
 const Chat = ({decodedLink, sessionId,initialMessages}:{decodedLink: string, sessionId? : string ,initialMessages : Message []}) => {
     
+    const formRef = useRef<HTMLFormElement>(null)
+
     const {messages, input, handleInputChange , handleSubmit} = useChat({
         api : "/api/chat-stream",
         body : {sessionId, decodedLink},
         initialMessages
     })
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+            e.preventDefault()
+            if (input.trim()) {
+                formRef.current?.requestSubmit()
+            }
+        }
+    }
+
   return (
     <div className=' flex flex-col items-center p-4 relative h-screen'>
         <div className='mb-4'>
@@ -42,6 +54,7 @@ const Chat = ({decodedLink, sessionId,initialMessages}:{decodedLink: string, ses
         </div>
 
         <form 
+            ref={formRef}
             onSubmit={handleSubmit}
             className='absolute bottom-4 left-4 right-4 md:left-auto 
             md:right-auto md:w-full md:max-w-4xl p-4 rounded-3xl border border-base-300 flex items-center  bg-base-300'>
@@ -49,6 +62,7 @@ const Chat = ({decodedLink, sessionId,initialMessages}:{decodedLink: string, ses
                     <textarea 
                         value={input}
                         onChange={handleInputChange}
+                        onKeyDown={handleKeyDown}
                         placeholder='Tapez votre question'
                         className='w-full outline-0 resize-none h-full bg-transparent mb-4'>
 
