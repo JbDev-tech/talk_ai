@@ -1,8 +1,8 @@
 import React from 'react'
 import Chat from '../components/Chat';
-import { cookies } from 'next/headers';
 import { redis } from '@/lib/redis';
 import { ragChat } from '@/lib/rag-chat';
+import { toNamespace } from '@/lib/namespace';
 
 interface PageProps {
     params: Promise<{
@@ -17,9 +17,7 @@ function reconstructUrl({url} : {url : string[]}){
 
 const page = async({params}: PageProps) => {
 
-    const sessionCookies = (await cookies()).get("sessionId")?.value
-
-   const  awaitedparams =  await params
+   const awaitedparams = await params
    if(!awaitedparams?.link){
     return <div>Erreur : Aucun lien fourni</div>
    }
@@ -31,7 +29,7 @@ const page = async({params}: PageProps) => {
   "$1://"
 );
 
-const sessionId = decodedLink;
+   const sessionId = crypto.randomUUID()
 
    const isAlreadyIndexed = await redis.sismember("indexed-urls",decodedLink)
 
@@ -40,20 +38,20 @@ const sessionId = decodedLink;
     await ragChat.context.add({
         type: "html",
         source: decodedLink,
-        config:{chunkOverlap: 100 , chunkSize:1000}
+        config:{chunkOverlap: 100 , chunkSize:1000},
+        options: { namespace: toNamespace(decodedLink) }
     })
     console.log("Indexation terminée");
     await redis.sadd("indexed-urls",decodedLink)
 
    }
 
-   const initialMessages = await ragChat.history.getMessages({amount:10, sessionId})
   return (
     <div> 
         <Chat
             decodedLink={decodedLink}
             sessionId={sessionId}
-            initialMessages={initialMessages}
+            initialMessages={[]}
         >
 
         </Chat>

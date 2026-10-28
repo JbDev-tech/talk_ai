@@ -8,7 +8,7 @@ const Chat = ({decodedLink, sessionId,initialMessages}:{decodedLink: string, ses
     
     const {messages, input, handleInputChange , handleSubmit} = useChat({
         api : "/api/chat-stream",
-        body : {sessionId},
+        body : {sessionId, decodedLink},
         initialMessages
     })
   return (

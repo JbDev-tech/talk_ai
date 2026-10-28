@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 export default function UrlForm() {
   const router = useRouter();
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
+  const [isPending, startTransition] = useTransition();
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (isPending) return;
     const trimmed = value.trim();
 
     if (!trimmed) {
@@ -24,7 +26,9 @@ export default function UrlForm() {
     try {
       const parsed = new URL(withProtocol);
       setError("");
-      router.push(`/${parsed.href}`);
+      startTransition(() => {
+        router.push(`/${parsed.href}`);
+      });
     } catch {
       setError("Cette adresse n'est pas valide. Exemple : https://exemple.com/page");
     }
@@ -40,10 +44,18 @@ export default function UrlForm() {
           placeholder="https://exemple.com/page"
           aria-label="Adresse de la page web"
           aria-invalid={error ? true : undefined}
+          disabled={isPending}
           className="input input-bordered w-full"
         />
-        <button type="submit" className="btn btn-primary">
-          Discuter avec cette page
+        <button type="submit" disabled={isPending} className="btn btn-primary">
+          {isPending ? (
+            <>
+              <span className="loading loading-spinner loading-sm"></span>
+              Analyse de la page…
+            </>
+          ) : (
+            "Discuter avec cette page"
+          )}
         </button>
       </div>
       {error && (
